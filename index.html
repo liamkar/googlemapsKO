@@ -2,6 +2,7 @@
 
 <HEAD>
   <link rel="stylesheet" type="text/css" href="css/map.css">
+
   <style>
   </style>
   <TITLE>GoogleMaps exercise</TITLE>
@@ -12,18 +13,43 @@
   <div id="map"></div>
   <script>
     function initMap() {
-      var uluru = {
+      var markerPositions = [{
         lat: -25.363,
         lng: 131.044
-      };
+      },
+      {
+        lat: -25.353,
+        lng: 131.034
+      },
+      {
+        lat: -25.353,
+        lng: 131.014
+      },
+      {
+        lat: -25.313,
+        lng: 131.034
+      },
+      {
+        lat: -25.313,
+        lng: 131.014
+      },
+      {
+        lat: -25.303,
+        lng: 131.004
+      }
+    ];
       var map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 4,
-        center: uluru
+        zoom: 7,
+        center: markerPositions[0]
       });
-      var marker = new google.maps.Marker({
-        position: uluru,
-        map: map
-      });
+
+      for (position of markerPositions) {
+        let marker = new google.maps.Marker({
+          position: position,
+          map: map
+        });
+      }
+
     }
   </script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
