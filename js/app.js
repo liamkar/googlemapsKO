@@ -46,6 +46,11 @@ var ViewModel = function() {
   self = this;
   this.markerList = ko.observableArray([]);
   this.markerList.push(...markers);
+
+  this.selectMarker = function(item, event) {
+    //self.currentCat(item);
+    console.log(item);
+  }
 }
 
 ko.applyBindings(new ViewModel());
