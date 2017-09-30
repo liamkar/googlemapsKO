@@ -2,64 +2,25 @@
 
 <HEAD>
   <link rel="stylesheet" type="text/css" href="css/map.css">
-
-  <style>
-  </style>
   <TITLE>GoogleMaps exercise</TITLE>
 </HEAD>
 
 <BODY BGCOLOR="FFFFFF">
-
-  <div id="map"></div>
+  <div id="container">
+  <section id="list">
+    <ul data-bind="foreach: markerList()">
+      <li>
+        <span data-bind="text: title"></span>
+      </li>
+    </ul>
+  </section>
+  <section id="map"></section>
+</div>
+  <script type='text/javascript' src='js/knockout-3.4.2.js'></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOhWQFLOGRgnG-r6DEWDJs-Y460JsroNY&callback=initMap"></script>
+  <script src="js/app.js"></script>
   <script>
     function initMap() {
-      var markers = [{
-          title: 'Hot dogs',
-          position: {
-            lat: -25.363,
-            lng: 131.044
-          }
-        },
-        {
-          title: 'WC',
-          position: {
-            lat: -25.353,
-            lng: 131.034
-          }
-        }
-
-        ,
-        {
-          title: 'Info',
-          position: {
-            lat: -25.353,
-            lng: 131.014
-          }
-        },
-        {
-          title: 'First aid',
-          position: {
-            lat: -25.313,
-            lng: 131.034
-          }
-        },
-        {
-          title: 'Bar',
-          position: {
-            lat: -25.313,
-            lng: 131.014
-          }
-        },
-        {
-          title: 'Terrace',
-          position: {
-            lat: -25.303,
-            lng: 131.004
-          }
-        }
-      ];
-
-
       var map = new google.maps.Map(document.getElementById('map'), {
         zoom: 7,
         center: markers[0].position
@@ -72,13 +33,9 @@
           map: map
         });
       }
-
     }
   </script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script type='text/javascript' src='js/knockout-3.4.2.js'></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOhWQFLOGRgnG-r6DEWDJs-Y460JsroNY&callback=initMap"></script>
-  <script src="js/app.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </BODY>
 
 </HTML>
