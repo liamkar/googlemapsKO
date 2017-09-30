@@ -1,3 +1,5 @@
+let googleMap =undefined;
+
 let markers = [{
     title: 'Hot dogs',
     position: {
@@ -64,13 +66,9 @@ var ViewModel = function() {
   this.markerList.push(...markers);
 
   this.selectMarker = function(item, event) {
-    console.log(item);
     google.maps.event.trigger(item.googleMapsMarker, 'click');
-    //TODO:center map based on selection.
-    //var center = new google.maps.LatLng(lat, lng);
-    // using global variable:
-    //map.panTo(center);
-    //google.maps.
+    //TODO:could centering be done by binding selected marker and creating bustom binder that would center map if selected marker is changed?
+    googleMap.setCenter(item.googleMapsMarker.getPosition());
   }
 }
 
@@ -81,7 +79,7 @@ ko.applyBindings(new ViewModel());
 //1. google map API would not have yet loaded due to async call while ViewModel is created.
 //2. would that be even beneficial?: update to model could not be populated to googlemaps view as we can't add UI binding inside google maps.
 function initMap() {
-  var map = new google.maps.Map(document.getElementById('map'), {
+  googleMap = new google.maps.Map(document.getElementById('map'), {
     zoom: 7,
     center: markers[0].position
   });
@@ -96,11 +94,11 @@ function initMap() {
       title: marker.title,
       position: marker.position,
       searched: false,
-      map: map
+      map: googleMap
     });
 
     googleMapsMarker.addListener('click', function() {
-              infowindow.open(map, googleMapsMarker);
+              infowindow.open(googleMap, googleMapsMarker);
             });
     //let's add googleMapMarker to our marker data model.
     //this way we can connect knockout event binding of our local data to googleMaps data.
