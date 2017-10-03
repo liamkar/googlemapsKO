@@ -1,46 +1,52 @@
-let googleMap =undefined;
+let googleMap = undefined;
 
 let markers = [{
     title: 'Hot dogs',
     position: {
       lat: -25.363,
       lng: 131.044
-    }
+    },
+    visible: true
   },
   {
     title: 'WC',
     position: {
       lat: -25.353,
       lng: 131.034
-    }
+    },
+    visible: true
   },
   {
     title: 'Info',
     position: {
       lat: -25.353,
       lng: 131.014
-    }
+    },
+    visible: true
   },
   {
     title: 'First aid',
     position: {
       lat: -25.313,
       lng: 131.034
-    }
+    },
+    visible: true
   },
   {
     title: 'Bar',
     position: {
       lat: -25.313,
       lng: 131.014
-    }
+    },
+    visible: true
   },
   {
     title: 'Terrace',
     position: {
       lat: -25.303,
       lng: 131.004
-    }
+    },
+    visible: true
   }
 ];
 
@@ -48,21 +54,19 @@ let Marker = function(data) {
   //TODO:throws this.clickcount not a method error if no ko.observable defined.
   //this.clickCount = ko.observable(data.clickCount);
   this.title = data.title;
-  this.posiion = data.position;
+  //this.title = ko.observable(data.title);
+  this.position = data.position;
   this.infoWindow = new google.maps.InfoWindow({
-      content: this.title
-    });
+    content: this.title
+  });
+  this.visible = true;
+  //this.visible = ko.observable(true);
 };
 
 
 var ViewModel = function() {
   self = this;
   this.markerList = ko.observableArray([]);
-  /*
-  for (marker of markers) {
-    this.markerList.push(new Marker(marker));
-  }
-  */
   this.markerList.push(...markers);
 
   this.selectMarker = function(item, event) {
@@ -72,16 +76,24 @@ var ViewModel = function() {
   }
 
   this.searchUpdate = function(item, event) {
-    console.log('search should be updated');
-    /*
-    google.maps.event.trigger(item.googleMapsMarker, 'click');
-    //TODO:could centering be done by binding selected marker and creating bustom binder that would center map if selected marker is changed?
-    googleMap.setCenter(item.googleMapsMarker.getPosition());
-    */
+    let searchText = event.target.value;
+
+    //if no search text given, set all results visible
+    if (searchText.length === 0) {
+      for (marker of this.markerList()) {
+        marker.visible = true;
+      }
+    } else {
+      for (marker of this.markerList()) {
+        if (marker.title.indexOf(searchText) >= 0) {
+          marker.visible = true;
+        } else {
+          marker.visible = false;
+        }
+      }
+    }
   }
-
 }
-
 
 ko.applyBindings(new ViewModel());
 
@@ -97,8 +109,8 @@ function initMap() {
   for (marker of markers) {
 
     let infowindow = new google.maps.InfoWindow({
-        content: marker.title
-      });
+      content: marker.title
+    });
 
     let googleMapsMarker = new google.maps.Marker({
       title: marker.title,
@@ -108,8 +120,8 @@ function initMap() {
     });
 
     googleMapsMarker.addListener('click', function() {
-              infowindow.open(googleMap, googleMapsMarker);
-            });
+      infowindow.open(googleMap, googleMapsMarker);
+    });
     //let's add googleMapMarker to our marker data model.
     //this way we can connect knockout event binding of our local data to googleMaps data.
     marker.googleMapsMarker = googleMapsMarker;

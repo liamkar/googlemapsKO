@@ -11,7 +11,7 @@
   <div id="container">
   <section id="list">
     <ul data-bind="foreach: markerList()">
-      <li>
+      <li data-bind="if: visible">
         <span data-bind="click: $parent.selectMarker, text: title"></span>
       </li>
     </ul>
