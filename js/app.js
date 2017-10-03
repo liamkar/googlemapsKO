@@ -70,6 +70,16 @@ var ViewModel = function() {
     //TODO:could centering be done by binding selected marker and creating bustom binder that would center map if selected marker is changed?
     googleMap.setCenter(item.googleMapsMarker.getPosition());
   }
+
+  this.searchUpdate = function(item, event) {
+    console.log('search should be updated');
+    /*
+    google.maps.event.trigger(item.googleMapsMarker, 'click');
+    //TODO:could centering be done by binding selected marker and creating bustom binder that would center map if selected marker is changed?
+    googleMap.setCenter(item.googleMapsMarker.getPosition());
+    */
+  }
+
 }
 
 
