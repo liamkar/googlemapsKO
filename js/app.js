@@ -1,73 +1,75 @@
 let googleMap = undefined;
 
+let markerObjects = [];
+
 let markers = [{
     title: 'Hot dogs',
     position: {
       lat: -25.363,
       lng: 131.044
-    },
-    visible: true
+    }
   },
   {
     title: 'WC',
     position: {
       lat: -25.353,
       lng: 131.034
-    },
-    visible: true
+    }
   },
   {
     title: 'Info',
     position: {
       lat: -25.353,
       lng: 131.014
-    },
-    visible: true
+    }
   },
   {
     title: 'First aid',
     position: {
       lat: -25.313,
       lng: 131.034
-    },
-    visible: true
+    }
   },
   {
     title: 'Bar',
     position: {
       lat: -25.313,
       lng: 131.014
-    },
-    visible: true
+    }
   },
   {
     title: 'Terrace',
     position: {
       lat: -25.303,
       lng: 131.004
-    },
-    visible: true
+    }
   }
 ];
 
 let Marker = function(data) {
   //TODO:throws this.clickcount not a method error if no ko.observable defined.
-  //this.clickCount = ko.observable(data.clickCount);
-  this.title = data.title;
-  //this.title = ko.observable(data.title);
+  this.title = ko.observable(data.title);
   this.position = data.position;
+  /*
   this.infoWindow = new google.maps.InfoWindow({
     content: this.title
   });
-  this.visible = true;
-  //this.visible = ko.observable(true);
+  */
+  //this.visible = true;
+  this.visible = ko.observable(true);
 };
 
 
 var ViewModel = function() {
   self = this;
   this.markerList = ko.observableArray([]);
-  this.markerList.push(...markers);
+  for (marker of markers) {
+    let markerObject = new Marker(marker);
+    markerObjects.push(markerObject);
+
+  }
+  this.markerList.push(...markerObjects);
+
 
   this.selectMarker = function(item, event) {
     google.maps.event.trigger(item.googleMapsMarker, 'click');
@@ -81,14 +83,16 @@ var ViewModel = function() {
     //if no search text given, set all results visible
     if (searchText.length === 0) {
       for (marker of this.markerList()) {
-        marker.visible = true;
+        marker.visible(true);
       }
     } else {
       for (marker of this.markerList()) {
-        if (marker.title.indexOf(searchText) >= 0) {
-          marker.visible = true;
+        if (marker.title().indexOf(searchText) >= 0) {
+          marker.visible(true);
+          console.log('search match');
         } else {
-          marker.visible = false;
+          marker.visible(false);
+          console.log('no match');
         }
       }
     }
@@ -106,14 +110,14 @@ function initMap() {
     center: markers[0].position
   });
 
-  for (marker of markers) {
+  for (marker of markerObjects) {
 
     let infowindow = new google.maps.InfoWindow({
-      content: marker.title
+      content: marker.title()
     });
 
     let googleMapsMarker = new google.maps.Marker({
-      title: marker.title,
+      title: marker.title(),
       position: marker.position,
       searched: false,
       map: googleMap
