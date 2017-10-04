@@ -47,15 +47,8 @@ let markers = [{
 ];
 
 let Marker = function(data) {
-  //TODO:throws this.clickcount not a method error if no ko.observable defined.
   this.title = ko.observable(data.title);
   this.position = data.position;
-  /*
-  this.infoWindow = new google.maps.InfoWindow({
-    content: this.title
-  });
-  */
-  //this.visible = true;
   this.visible = ko.observable(true);
 };
 
@@ -105,6 +98,14 @@ var ViewModel = function() {
 
 ko.applyBindings(new ViewModel());
 
+function buildWikiSearchUrl(pattern) {
+    let base_url = "https://en.wikipedia.org/w/api.php";
+    let format = "&format=json";
+    let request_url = "?action=query&format=json&list=search&srsearch=";
+    let url = base_url + request_url + pattern;
+    return url;
+}
+
 //I guess we can't initialize map objects in ViewModel as:
 //1. google map API would not have yet loaded due to async call while ViewModel is created.
 //2. would that be even beneficial?: update to model could not be populated to googlemaps view as we can't add UI binding inside google maps.
@@ -129,12 +130,26 @@ function initMap() {
       });
 
       googleMapsMarker.addListener('click', function() {
-        infowindow.open(googleMap, googleMapsMarker);
+
+        let url = buildWikiSearchUrl(this.title);
+        $.ajax( {
+            type: "GET",
+            url: url,
+            dataType: 'jsonp',
+            success: function(data) {
+                //TODO: why this.title here will be undefined?
+                infowindow.setContent(data.query.search[0].title + '<br/>' + data.query.search[0].snippet);
+                infowindow.open(googleMap, googleMapsMarker);
+            },
+            error: function(errorMessage) {
+                 console.log("damnn");
+                 infowindow.open(googleMap, googleMapsMarker);
+              }
+        });
       });
       //let's add googleMapMarker to our marker data model.
       //this way we can connect knockout event binding of our local data to googleMaps data.
       marker.googleMapsMarker = googleMapsMarker;
     }
   }
-
 }
