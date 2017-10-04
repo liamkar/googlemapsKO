@@ -84,15 +84,19 @@ var ViewModel = function() {
     if (searchText.length === 0) {
       for (marker of this.markerList()) {
         marker.visible(true);
+        marker.googleMapsMarker.setVisible(true);
       }
     } else {
       for (marker of this.markerList()) {
         if (marker.title().indexOf(searchText) >= 0) {
+          if (!marker.visible()) {
+            marker.googleMapsMarker.setVisible(true);
+          }
           marker.visible(true);
-          console.log('search match');
+
         } else {
           marker.visible(false);
-          console.log('no match');
+          marker.googleMapsMarker.setVisible(false);
         }
       }
     }
@@ -111,24 +115,26 @@ function initMap() {
   });
 
   for (marker of markerObjects) {
+    if (marker.visible()) {
 
-    let infowindow = new google.maps.InfoWindow({
-      content: marker.title()
-    });
+      let infowindow = new google.maps.InfoWindow({
+        content: marker.title()
+      });
 
-    let googleMapsMarker = new google.maps.Marker({
-      title: marker.title(),
-      position: marker.position,
-      searched: false,
-      map: googleMap
-    });
+      let googleMapsMarker = new google.maps.Marker({
+        title: marker.title(),
+        position: marker.position,
+        searched: false,
+        map: googleMap
+      });
 
-    googleMapsMarker.addListener('click', function() {
-      infowindow.open(googleMap, googleMapsMarker);
-    });
-    //let's add googleMapMarker to our marker data model.
-    //this way we can connect knockout event binding of our local data to googleMaps data.
-    marker.googleMapsMarker = googleMapsMarker;
+      googleMapsMarker.addListener('click', function() {
+        infowindow.open(googleMap, googleMapsMarker);
+      });
+      //let's add googleMapMarker to our marker data model.
+      //this way we can connect knockout event binding of our local data to googleMaps data.
+      marker.googleMapsMarker = googleMapsMarker;
+    }
   }
 
 }
